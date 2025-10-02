@@ -1,24 +1,18 @@
 #include "raylib.h"
+#include "player.h"
+#include <stdio.h>
+#include "constants.h"
 
 int main() {
-    
-    typedef struct {
-        Vector2 position;
-        Vector2 size;
-        float speed;
-    } player_t;
-    
-    
-    InitWindow(800, 450, "Ctrl-C");
+       
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ctrl-C");
     
     player_t player = {
         .position = { 0, 0 },
         .size = { 50, 50 },
+        .direction = { 0, 0 },
         .speed = 30.0f
     };
-    
-    Vector2 position = { 0, 0 };
-    Vector2 size = { 50, 50 };
     
     while(!WindowShouldClose()) {
         float dt = GetFrameTime();
@@ -28,10 +22,17 @@ int main() {
         ClearBackground(RAYWHITE);
         
         if (IsKeyDown('D')) {
-            player.position.x += player.speed * dt;
+            player.direction.x = 1;
+        }
+        else if (IsKeyDown('A')) {
+            player.direction.x = -1;
+        }
+        else {
+            player.direction.x = 0;
         }
         
-        DrawRectangleV(player.position, player.size, RED);
+        player_update(&player, dt);
+        player_draw(&player);
         
         EndDrawing();
     }
