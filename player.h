@@ -6,6 +6,7 @@ typedef struct {
     Vector2 size;
     Vector2 direction;
     float speed;
+    Texture2D texture;
 } player_t;
 
 void player_update(player_t *p, float dt);

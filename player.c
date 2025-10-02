@@ -11,7 +11,7 @@ void player_update(player_t *p, float dt) {
 }
 
 void player_draw(player_t *p) {
-    DrawRectangleV(p->position, p->size, RED);
+    DrawTextureV(p->texture, p->position, WHITE);
 }
 
 void player_move(player_t *p, float dt) {
