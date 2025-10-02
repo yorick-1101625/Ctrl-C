@@ -11,7 +11,7 @@ int main() {
         .position = { 0, 0 },
         .size = { 50, 50 },
         .direction = { 0, 0 },
-        .speed = 30.0f
+        .speed = 80.0f
     };
     
     while(!WindowShouldClose()) {
@@ -20,16 +20,6 @@ int main() {
         BeginDrawing();
         
         ClearBackground(RAYWHITE);
-        
-        if (IsKeyDown('D')) {
-            player.direction.x = 1;
-        }
-        else if (IsKeyDown('A')) {
-            player.direction.x = -1;
-        }
-        else {
-            player.direction.x = 0;
-        }
         
         player_update(&player, dt);
         player_draw(&player);
