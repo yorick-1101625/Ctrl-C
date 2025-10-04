@@ -2,11 +2,10 @@
 #define PLAYER_H
 
 typedef struct {
-    Vector2 position;
-    Vector2 size;
     Vector2 direction;
     int speed;
     Texture2D texture;
+    Rectangle rect;
 } player_t;
 
 void player_update(player_t *p, float dt);

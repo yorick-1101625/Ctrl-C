@@ -1,18 +1,19 @@
 #include "raylib.h"
 #include "player.h"
 #include "constants.h"
+#include <stdio.h>
 
 void player_move(player_t *p, float dt);
 void player_check_input(player_t *p);
 
 player_t player_init(Vector2 position, Vector2 size, Texture2D texture) {
+    Rectangle rect = { position.x, position.y, size.x, size.y };
     
     player_t new_player = {
-        .position = position,
-        .size = size,
         .texture = texture,
         .speed = 200,
         .direction = { 0, 0 },
+        .rect = rect,
     };
     
     return new_player;
@@ -25,27 +26,28 @@ void player_update(player_t *p, float dt) {
 }
 
 void player_draw(player_t *p) {
-    DrawTextureV(p->texture, p->position, WHITE);
+    DrawTexture(p->texture, p->rect.x, p->rect.y, WHITE);
+    DrawRectangleRec(p->rect, RED);
 }
 
 void player_move(player_t *p, float dt) {
-    
-    p->position.x += p->speed * p->direction.x * dt;
-    p->position.y += p->speed * p->direction.y * dt;  
+    p->rect.x += p->speed * p->direction.x * dt;
+    p->rect.y += p->speed * p->direction.y * dt;  
+    //printf("%f", p->rect.x);
     
     // Set movement boundaries
     // TODO: Ignore transparent pixels
-    if (p->position.x > SCREEN_WIDTH) {
-        p->position.x = SCREEN_WIDTH;
+    if (p->rect.x > SCREEN_WIDTH) {
+        p->rect.x = SCREEN_WIDTH;
     }
-    else if (p->position.x < 0) {
-        p->position.x = 0;
+    else if (p->rect.x < 0) {
+        p->rect.x = 0;
     }
-    if (p->position.y > SCREEN_HEIGHT) {
-        p->position.y = SCREEN_HEIGHT;
+    if (p->rect.y > SCREEN_HEIGHT) {
+        p->rect.y = SCREEN_HEIGHT;
     }
-    else if (p->position.y < 0) {
-        p->position.y = 0;
+    else if (p->rect.y < 0) {
+        p->rect.y = 0;
     }
 }
 

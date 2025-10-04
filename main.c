@@ -11,7 +11,7 @@ int main() {
     ImageResize(&player_image, 200, 200);
     Texture2D player_texture = LoadTextureFromImage(player_image);
     Vector2 player_position = { 0, 0 };
-    Vector2 player_size = { 0, 0 };
+    Vector2 player_size = { 50, 50 };
     // Create Player
     player_t player = player_init(player_position, player_size, player_texture);
     
