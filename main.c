@@ -6,18 +6,14 @@
 int main() {    
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ctrl-C");
     
-    // Player Image
+    // Player
     Image player_image = LoadImage("assets/Varken.png");
     ImageResize(&player_image, 200, 200);
     Texture2D player_texture = LoadTextureFromImage(player_image);
-    
-    player_t player = {
-        .position = { 0, 0 },
-        .size = { 50, 50 },
-        .direction = { 0, 0 },
-        .speed = 200.0f,
-        .texture = player_texture
-    };
+    Vector2 player_position = { 0, 0 };
+    Vector2 player_size = { 0, 0 };
+    // Create Player
+    player_t player = player_init(player_position, player_size, player_texture);
     
     while(!WindowShouldClose()) {
         float dt = GetFrameTime();
