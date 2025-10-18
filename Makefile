@@ -484,13 +484,13 @@ endif
 rwildcard=$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 
 # Define all source files required
-SRC_DIR = .
-OBJ_DIR = .
+SRC_DIR = ./src
+OBJ_DIR = ./obj
 
 # Define all object files from source files
 SRC = $(call rwildcard, ./, *.c, *.h)
-#OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJS = $(patsubst %.c,%.o,$(filter %.c,$(SRC)))
+OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+#OBJS = $(patsubst %.c,%.o,$(filter %.c,$(SRC)))
 
 # Default target entry
 # NOTE: We call this Makefile target or Makefile.Android target

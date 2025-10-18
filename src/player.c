@@ -34,7 +34,6 @@ void player_move(player_t *p, float dt) {
     p->rect.y += p->speed * p->direction.y * dt;
     
     // Set movement boundaries
-    // TODO: Ignore transparent pixels
     if (p->rect.x + p->rect.width > SCREEN_WIDTH) {
         p->rect.x = SCREEN_WIDTH - p->rect.width;
     }
