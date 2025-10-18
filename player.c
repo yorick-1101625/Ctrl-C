@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include "player.h"
 #include "constants.h"
-#include <stdio.h>
 
 void player_move(player_t *p, float dt);
 void player_check_input(player_t *p);
@@ -32,19 +31,18 @@ void player_draw(player_t *p) {
 
 void player_move(player_t *p, float dt) {
     p->rect.x += p->speed * p->direction.x * dt;
-    p->rect.y += p->speed * p->direction.y * dt;  
-    //printf("%f", p->rect.x);
+    p->rect.y += p->speed * p->direction.y * dt;
     
     // Set movement boundaries
     // TODO: Ignore transparent pixels
-    if (p->rect.x > SCREEN_WIDTH) {
-        p->rect.x = SCREEN_WIDTH;
+    if (p->rect.x + p->rect.width > SCREEN_WIDTH) {
+        p->rect.x = SCREEN_WIDTH - p->rect.width;
     }
     else if (p->rect.x < 0) {
         p->rect.x = 0;
     }
-    if (p->rect.y > SCREEN_HEIGHT) {
-        p->rect.y = SCREEN_HEIGHT;
+    if (p->rect.y + p->rect.height > SCREEN_HEIGHT) {
+        p->rect.y = SCREEN_HEIGHT - p->rect.height;
     }
     else if (p->rect.y < 0) {
         p->rect.y = 0;
