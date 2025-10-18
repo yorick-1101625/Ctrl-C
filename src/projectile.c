@@ -13,16 +13,10 @@ void projectile_move(entity_t *p, float dt) {
     p->rect.y += p->speed * p->direction.y * dt;
 }
 
-entity_t projectile_init() {
-    // Projectile
-    Vector2 position = { 500, 500 };
-    Vector2 size = { 70, 46 };
-    Rectangle rect = { position.x, position.y, size.x, size.y };
-    // Projectile image
-    Image image = LoadImage("assets/gas.png"); // Original size: 2000x1358, 3:2
-    ImageResize(&image, size.x, size.y);
-    ImageRotateCCW(&image);
-    Texture2D texture = LoadTextureFromImage(image);
+entity_t projectile_init(Vector2 position, Texture2D texture) {
+    
+    Rectangle rect = { position.x, position.y, texture.width, texture.height };
+    
     // Create Projectile    
     entity_t new_projectile = {
         .texture = texture,

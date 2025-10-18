@@ -53,20 +53,15 @@ void player_check_input(entity_t *p) {
     }
     
     // Shoot projectile
-    if (IsKeyDown('SPACE')) {
-        
+    if (IsKeyDown('K')) {
+        //projectile_init();
     }
 }
 
-entity_t player_init() {
+entity_t player_init(Vector2 position, Texture2D texture) {
     
-    Vector2 position = { 0, 0 };
-    Vector2 size = { 150, 150 };
-    Rectangle rect = { position.x, position.y, size.x, size.y };
-    // Image
-    Image image = LoadImage("assets/Varken.png"); // Original size: 100x100, 1:1
-    ImageResize(&image, size.x, size.y);
-    Texture2D texture = LoadTextureFromImage(image);
+    Rectangle rect = { position.x, position.y, texture.width, texture.height };
+    
     // Create Player    
     entity_t new_player = {
         .texture = texture,
