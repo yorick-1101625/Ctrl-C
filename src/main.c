@@ -38,19 +38,19 @@ int main() {
             Vector2 projectile_position = { player.rect.x, player.rect.y };
             entity_t new_projectile = projectile_init(projectile_position, textures[1]);
             
-            all_projectiles = add_entity(all_projectiles, new_projectile);
+            projectile_count += 1;
+            all_projectiles = add_entity(all_projectiles, new_projectile, projectile_count);
             if (all_projectiles == NULL) {
                 free(textures);
                 CloseWindow();
                 return 1;
             }
-            projectile_count += 1;
+            
         }
         
         // Player
         player_update(&player, dt);
         entity_draw(&player);
-        //entity_draw(&projectile_1);
         
         // Projectiles
         for (int i = 0;  i < projectile_count; i++) {

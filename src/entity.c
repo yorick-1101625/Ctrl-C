@@ -15,9 +15,9 @@ entity_t *init_entity_array() {
     return array;
 }
 
-entity_t *add_entity(entity_t *array, entity_t new_entity) {
+entity_t *add_entity(entity_t *array, entity_t new_entity, int total_number_of_entities) {
     
-    int new_size = sizeof(array) + sizeof(entity_t);
+    int new_size = sizeof(entity_t) * total_number_of_entities;
     
     array = realloc(array, new_size);
     if (array == NULL) {
