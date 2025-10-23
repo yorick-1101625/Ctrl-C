@@ -5,10 +5,11 @@
 #include "entity.h"
 #include "projectile.h"
 #include <stdio.h>
+#include "apple.h"
 
 Texture2D *load_textures();
 
-int main() {    
+int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ctrl-C");
     
     Texture2D *textures = load_textures();
@@ -19,10 +20,13 @@ int main() {
     
     entity_t *all_projectiles = NULL;
     int projectile_count = 0;
+    entity_t *all_apples = NULL;
+    int apple_count = 0;
     
 
     entity_t player = player_init((Vector2){SCREEN_WIDTH / 2,SCREEN_HEIGHT}, textures[0]);
     
+    entity_t apple_1 = apple_init((Vector2){100, 100}, textures[2]);
     
     while(!WindowShouldClose()) {
         float dt = GetFrameTime();
@@ -30,8 +34,6 @@ int main() {
         BeginDrawing();
         
         ClearBackground(RAYWHITE);
-        
-        
         
         if (IsKeyReleased('K')) {
             Vector2 projectile_position = { player.rect.x, player.rect.y + player.texture.height / 2 };
@@ -44,7 +46,7 @@ int main() {
                 CloseWindow();
                 return 1;
             }
-            
+            // extract to function and give function to player_update as argument?
         }
         
         // Player
@@ -56,6 +58,11 @@ int main() {
             projectile_update(&all_projectiles[i], dt);
             entity_draw(&all_projectiles[i]);
         }
+        
+        // Apples
+        apple_update(&apple_1, dt);
+        entity_draw(&apple_1);
+        
         EndDrawing();
     }
     
@@ -67,7 +74,9 @@ int main() {
 }
 
 Texture2D *load_textures() {
-    Texture2D *textures = malloc(sizeof(Texture2D) * 2);
+    int number_of_textures = 3;
+    
+    Texture2D *textures = malloc(sizeof(Texture2D) * number_of_textures);
     if (textures == NULL) {
         return NULL;
     }
@@ -77,11 +86,16 @@ Texture2D *load_textures() {
     ImageResize(&player_image, player_image.width * 2, player_image.height * 2);
     textures[0] = LoadTextureFromImage(player_image);
     
-    // Projectile texture
+    // Gas texture
     Image projectile_image = LoadImage("assets/gas.png");
     ImageResize(&projectile_image, projectile_image.width / 20, projectile_image.height / 20);
     ImageRotateCCW(&projectile_image);
     textures[1] = LoadTextureFromImage(projectile_image);
+    
+    // Apple texture
+    Image apple_image = LoadImage("assets/appel.png");
+    ImageResize(&apple_image, apple_image.width * 0.2, apple_image.height * 0.2);
+    textures[2] = LoadTextureFromImage(apple_image);
     
     return textures;
 }
