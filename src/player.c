@@ -52,10 +52,6 @@ void player_check_input(entity_t *p) {
         p->direction.y += 1;
     }
     
-    // Shoot projectile
-    if (IsKeyDown('K')) {
-        //projectile_init();
-    }
 }
 
 entity_t player_init(Vector2 position, Texture2D texture) {

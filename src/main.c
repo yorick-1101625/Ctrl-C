@@ -4,8 +4,10 @@
 #include "constants.h"
 #include "entity.h"
 #include "projectile.h"
+#include <stdio.h>
 
 Texture2D *load_textures();
+void shoot_projectile(Vector2 position, Texture2D texture);
 
 int main() {    
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ctrl-C");
@@ -16,10 +18,12 @@ int main() {
         return 1;
     }
     
+    entity_t *all_projectiles = NULL;
+    int projectile_count = 0;
     
+
     entity_t player = player_init((Vector2){0,0}, textures[0]);
     
-    entity_t projectile_1 = projectile_init((Vector2){500,500}, textures[1]);
     
     while(!WindowShouldClose()) {
         float dt = GetFrameTime();
@@ -28,16 +32,36 @@ int main() {
         
         ClearBackground(RAYWHITE);
         
+        
+        
+        if (IsKeyReleased('K')) {
+            Vector2 projectile_position = { player.rect.x, player.rect.y };
+            entity_t new_projectile = projectile_init(projectile_position, textures[1]);
+            
+            all_projectiles = add_entity(all_projectiles, new_projectile);
+            if (all_projectiles == NULL) {
+                free(textures);
+                CloseWindow();
+                return 1;
+            }
+            projectile_count += 1;
+        }
+        
+        // Player
         player_update(&player, dt);
-        projectile_update(&projectile_1, dt);
-        
         entity_draw(&player);
-        entity_draw(&projectile_1);
+        //entity_draw(&projectile_1);
         
+        // Projectiles
+        for (int i = 0;  i < projectile_count; i++) {
+            projectile_update(&all_projectiles[i], dt);
+            entity_draw(&all_projectiles[i]);
+        }
         EndDrawing();
     }
     
     free(textures);
+    free(all_projectiles);
     CloseWindow();
     
     return 0;
@@ -64,6 +88,7 @@ Texture2D *load_textures() {
 }
 
 
-void shoot_projectile() {
-    //projectile_init(projectile_texture);
+void shoot_projectile(Vector2 position, Texture2D texture) {
+    
+    
 }
