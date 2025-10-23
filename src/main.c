@@ -7,7 +7,6 @@
 #include <stdio.h>
 
 Texture2D *load_textures();
-void shoot_projectile(Vector2 position, Texture2D texture);
 
 int main() {    
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ctrl-C");
@@ -22,7 +21,7 @@ int main() {
     int projectile_count = 0;
     
 
-    entity_t player = player_init((Vector2){0,0}, textures[0]);
+    entity_t player = player_init((Vector2){SCREEN_WIDTH / 2,SCREEN_HEIGHT}, textures[0]);
     
     
     while(!WindowShouldClose()) {
@@ -35,7 +34,7 @@ int main() {
         
         
         if (IsKeyReleased('K')) {
-            Vector2 projectile_position = { player.rect.x, player.rect.y };
+            Vector2 projectile_position = { player.rect.x, player.rect.y + player.texture.height / 2 };
             entity_t new_projectile = projectile_init(projectile_position, textures[1]);
             
             projectile_count += 1;
@@ -74,21 +73,15 @@ Texture2D *load_textures() {
     }
     
     // Player texture
-    Image player_image = LoadImage("assets/Varken.png"); // Original size: 100x100, 1:1
-    ImageResize(&player_image, 150, 150);
+    Image player_image = LoadImage("assets/Varken.png");
+    ImageResize(&player_image, player_image.width * 2, player_image.height * 2);
     textures[0] = LoadTextureFromImage(player_image);
     
     // Projectile texture
-    Image projectile_image = LoadImage("assets/gas.png"); // Original size: 2000x1358, 3:2
-    ImageResize(&projectile_image, 70, 46);
+    Image projectile_image = LoadImage("assets/gas.png");
+    ImageResize(&projectile_image, projectile_image.width / 20, projectile_image.height / 20);
     ImageRotateCCW(&projectile_image);
     textures[1] = LoadTextureFromImage(projectile_image);
     
     return textures;
-}
-
-
-void shoot_projectile(Vector2 position, Texture2D texture) {
-    
-    
 }
