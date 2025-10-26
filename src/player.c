@@ -25,8 +25,8 @@ void player_move(entity_t *p, float dt) {
     if (p->rect.y + p->rect.height > SCREEN_HEIGHT) {
         p->rect.y = SCREEN_HEIGHT - p->rect.height;
     }
-    else if (p->rect.y < 0) {
-        p->rect.y = 0;
+    else if (p->rect.y < (SCREEN_HEIGHT / 2)) {
+        p->rect.y = SCREEN_HEIGHT / 2;
     }
 }
 
