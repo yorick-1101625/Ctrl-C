@@ -23,13 +23,34 @@ int main() {
     int projectile_count = 0;
     entity_t *all_apples = NULL;
     int apple_count = 0;
+    entity_t *all_enemies = NULL;
+    int enemy_count = 0;
     
 
     entity_t player = player_init((Vector2){SCREEN_WIDTH / 2,SCREEN_HEIGHT}, textures[0]);
-   
-    entity_t apple_1 = apple_init((Vector2){100, 100}, textures[2]);
     
+    // Temporary
+    entity_t apple_1 = apple_init((Vector2){100, 100}, textures[2]);
+    apple_count += 1;
+    all_apples = add_entity(all_apples, apple_1, apple_count);
+    if (all_apples == NULL) {
+                free(textures);
+                free(all_projectiles);
+                free(all_enemies);
+                CloseWindow();
+                return 1;
+            }
+            
     entity_t enemy_1 = enemy_init((Vector2){SCREEN_WIDTH / 2, 100}, textures[3]);
+    enemy_count += 1;
+    all_enemies = add_entity(all_enemies, enemy_1, enemy_count);
+    if (all_enemies == NULL) {
+                free(textures);
+                free(all_apples);
+                free(all_projectiles);
+                CloseWindow();
+                return 1;
+            }
     
     while(!WindowShouldClose()) {
         float dt = GetFrameTime();
@@ -47,6 +68,7 @@ int main() {
             if (all_projectiles == NULL) {
                 free(textures);
                 free(all_apples);
+                free(all_enemies);
                 CloseWindow();
                 return 1;
             }
@@ -64,12 +86,16 @@ int main() {
         }
         
         // Apples
-        apple_update(&apple_1, dt);
-        entity_draw(&apple_1);
+        for (int i = 0;  i < apple_count; i++) {
+            apple_update(&all_apples[i], dt);
+            entity_draw(&all_apples[i]);
+        }
         
         // Enemy
-        enemy_update(&enemy_1, dt);
-        entity_draw(&enemy_1);
+        for (int i = 0;  i < enemy_count; i++) {
+            enemy_update(&all_enemies[i], dt);
+            entity_draw(&all_enemies[i]);
+        }
         
         EndDrawing();
     }
@@ -77,6 +103,7 @@ int main() {
     free(textures);
     free(all_projectiles);
     free(all_apples);
+    free(all_enemies);
     CloseWindow();
     
     return 0;
