@@ -77,8 +77,16 @@ int main() {
             for (int j = 0; j < enemy_count; j++) {
                 bool collision = CheckCollisionRecs(all_projectiles[i].rect, all_enemies[j].rect);
                 if (collision) {
-                    printf("Collision!");
-                    // Kill enemy
+                    // Remove enemy from array
+                    all_enemies = remove_entity(all_enemies, j, enemy_count);
+                    enemy_count -= 1;
+                    if (all_enemies == NULL && enemy_count > 1) {
+                        free(textures);
+                        free(all_apples);
+                        free(all_projectiles);
+                        CloseWindow();
+                        return 1;
+                    }
                 }
             }
         }

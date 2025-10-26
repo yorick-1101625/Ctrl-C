@@ -5,29 +5,6 @@
 void entity_draw(entity_t *e) {
     DrawTexture(e->texture, e->rect.x, e->rect.y, WHITE);
 }
-// remove?
-entity_t *init_entity_array() {
-    entity_t *array = malloc(sizeof(entity_t));
-    if (array == NULL) {
-        return NULL;
-    }
-    
-    return array;
-}
-
-entity_t *add_entity(entity_t *array, entity_t new_entity, int total_number_of_entities) {
-    
-    int new_size = sizeof(entity_t) * total_number_of_entities;
-    
-    array = realloc(array, new_size);
-    if (array == NULL) {
-        return NULL;
-    }
-    
-    array[new_size / sizeof(entity_t) - 1] = new_entity;
-    
-    return array;
-}
 
 entity_t entity_init(Vector2 position, Texture2D texture, Vector2 direction, int speed) {
     Rectangle rect = { position.x, position.y, texture.width, texture.height };
@@ -41,4 +18,34 @@ entity_t entity_init(Vector2 position, Texture2D texture, Vector2 direction, int
     };
     
     return new_entity;
+}
+
+entity_t *add_entity(entity_t *array, entity_t new_entity, int number_of_elements) {
+    
+    int new_size = sizeof(entity_t) * number_of_elements;
+    
+    entity_t *tmp = realloc(array, new_size);
+    if (tmp == NULL) {
+        return NULL;
+    }
+    
+    tmp[new_size / sizeof(entity_t) - 1] = new_entity;
+    
+    return tmp;
+}
+
+entity_t *remove_entity(entity_t *array, int index, int number_of_elements) {
+    // Move elements
+    for (int i = index; i < number_of_elements - 1; i++) {
+        array[i] = array[i + 1];
+    }
+    
+    int new_size = sizeof(entity_t) * (number_of_elements - 1);
+    
+    entity_t *tmp = realloc(array, new_size);
+    if (tmp == NULL) {
+       return NULL;
+    }
+    
+    return tmp;
 }
