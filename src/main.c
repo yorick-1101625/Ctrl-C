@@ -55,10 +55,6 @@ int main() {
     while(!WindowShouldClose()) {
         float dt = GetFrameTime();
         
-        BeginDrawing();
-        
-        ClearBackground(RAYWHITE);
-        
         if (IsKeyReleased('K')) {
             Vector2 projectile_position = { player.rect.x, player.rect.y + player.texture.height / 2 };
             entity_t new_projectile = projectile_init(projectile_position, textures[1]);
@@ -74,6 +70,23 @@ int main() {
             }
             // extract to function and give function to player_update as argument?
         }
+        
+        // Collisions
+        // Player Projectile / Enemy
+        for (int i = 0; i < projectile_count; i++) {
+            for (int j = 0; j < enemy_count; j++) {
+                bool collision = CheckCollisionRecs(all_projectiles[i].rect, all_enemies[j].rect);
+                if (collision) {
+                    printf("Collision!");
+                    // Kill enemy
+                }
+            }
+        }
+        
+        
+        BeginDrawing();
+        
+        ClearBackground(RAYWHITE);
         
         // Player
         player_update(&player, dt);
