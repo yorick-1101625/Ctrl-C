@@ -16,6 +16,6 @@ void projectile_move(entity_t *p, float dt) {
 entity_t projectile_init(Vector2 position, Texture2D texture) {
     
     Vector2 direction = { 0, -1 };
-    int speed = 200;
+    int speed = 400;
     return entity_init(position, texture, direction, speed);
 }

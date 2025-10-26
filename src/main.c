@@ -9,6 +9,13 @@
 #include "enemy.h"
 
 Texture2D *load_textures();
+void cleanup(
+    Texture2D *textures, 
+    entity_t *all_projectiles,
+    entity_t *all_apples, 
+    entity_t *all_enemies
+);
+bool timer(float last_time, float cooldown);
 
 int main() {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Ctrl-C");
@@ -23,8 +30,11 @@ int main() {
     int projectile_count = 0;
     entity_t *all_apples = NULL;
     int apple_count = 0;
+    
     entity_t *all_enemies = NULL;
     int enemy_count = 0;
+    float enemy_spawn_cooldown = 2.0;
+    float last_enemy_spawn_time = 0.0;
     
 
     entity_t player = player_init((Vector2){SCREEN_WIDTH / 2,SCREEN_HEIGHT}, textures[0]);
@@ -34,23 +44,11 @@ int main() {
     apple_count += 1;
     all_apples = add_entity(all_apples, apple_1, apple_count);
     if (all_apples == NULL) {
-                free(textures);
-                free(all_projectiles);
-                free(all_enemies);
-                CloseWindow();
-                return 1;
-            }
+        cleanup(textures, all_projectiles, all_apples, all_enemies);
+        return 1;
+    }
             
-    entity_t enemy_1 = enemy_init((Vector2){SCREEN_WIDTH / 2, 100}, textures[3]);
-    enemy_count += 1;
-    all_enemies = add_entity(all_enemies, enemy_1, enemy_count);
-    if (all_enemies == NULL) {
-                free(textures);
-                free(all_apples);
-                free(all_projectiles);
-                CloseWindow();
-                return 1;
-            }
+    
     
     while(!WindowShouldClose()) {
         float dt = GetFrameTime();
@@ -62,13 +60,23 @@ int main() {
             projectile_count += 1;
             all_projectiles = add_entity(all_projectiles, new_projectile, projectile_count);
             if (all_projectiles == NULL) {
-                free(textures);
-                free(all_apples);
-                free(all_enemies);
-                CloseWindow();
+                cleanup(textures, all_projectiles, all_apples, all_enemies);
                 return 1;
             }
             // extract to function and give function to player_update as argument?
+        }
+        
+        // Enemy Spawning
+        if (timer(last_enemy_spawn_time, enemy_spawn_cooldown)) {
+            last_enemy_spawn_time = GetTime();
+            
+            entity_t new_enemy = enemy_init((Vector2){SCREEN_WIDTH / 2, 100}, textures[3]);
+            enemy_count += 1;
+            all_enemies = add_entity(all_enemies, new_enemy, enemy_count);
+            if (all_enemies == NULL) {
+                cleanup(textures, all_projectiles, all_apples, all_enemies);
+                return 1;
+            }
         }
         
         // Collisions
@@ -77,14 +85,19 @@ int main() {
             for (int j = 0; j < enemy_count; j++) {
                 bool collision = CheckCollisionRecs(all_projectiles[i].rect, all_enemies[j].rect);
                 if (collision) {
-                    // Remove enemy from array
+                    // Kill enemy 
                     all_enemies = remove_entity(all_enemies, j, enemy_count);
                     enemy_count -= 1;
                     if (all_enemies == NULL && enemy_count > 1) {
-                        free(textures);
-                        free(all_apples);
-                        free(all_projectiles);
-                        CloseWindow();
+                        cleanup(textures, all_projectiles, all_apples, all_enemies);
+                        return 1;
+                    }
+                    
+                    // Kill projectile
+                    all_projectiles = remove_entity(all_projectiles, i, projectile_count);
+                    projectile_count -= 1;
+                    if (all_projectiles == NULL && projectile_count > 1) {
+                        cleanup(textures, all_projectiles, all_apples, all_enemies);
                         return 1;
                     }
                 }
@@ -121,11 +134,7 @@ int main() {
         EndDrawing();
     }
     
-    free(textures);
-    free(all_projectiles);
-    free(all_apples);
-    free(all_enemies);
-    CloseWindow();
+    cleanup(textures, all_projectiles, all_apples, all_enemies);
     
     return 0;
 }
@@ -140,7 +149,7 @@ Texture2D *load_textures() {
     
     // Player texture
     Image player_image = LoadImage("assets/Varken.png");
-    ImageResize(&player_image, player_image.width * 2, player_image.height * 2);
+    ImageResize(&player_image, player_image.width * 1.5, player_image.height * 1.5);
     textures[0] = LoadTextureFromImage(player_image);
     
     // Gas texture
@@ -160,4 +169,22 @@ Texture2D *load_textures() {
     textures[3] = LoadTextureFromImage(enemy_image);
     
     return textures;
+}
+
+void cleanup(
+    Texture2D *textures, 
+    entity_t *all_projectiles,
+    entity_t *all_apples, 
+    entity_t *all_enemies
+) {
+    free(textures);
+    free(all_projectiles);
+    free(all_apples);
+    free(all_enemies);
+    CloseWindow();
+}
+
+bool timer(float last_time, float cooldown) {
+    float time_between = GetTime() - last_time;
+    return time_between > cooldown;
 }
