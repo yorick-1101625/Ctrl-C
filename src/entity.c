@@ -28,3 +28,17 @@ entity_t *add_entity(entity_t *array, entity_t new_entity, int total_number_of_e
     
     return array;
 }
+
+entity_t entity_init(Vector2 position, Texture2D texture, Vector2 direction, int speed) {
+    Rectangle rect = { position.x, position.y, texture.width, texture.height };
+    
+    // Create Entity    
+    entity_t new_entity = {
+        .texture = texture,
+        .speed = speed,
+        .direction = direction,
+        .rect = rect,
+    };
+    
+    return new_entity;
+}

@@ -1,7 +1,6 @@
 #include "raylib.h"
 #include "player.h"
 #include "constants.h"
-#include "projectile.h"
 
 void player_move(entity_t *p, float dt);
 void player_check_input(entity_t *p);
@@ -56,15 +55,7 @@ void player_check_input(entity_t *p) {
 
 entity_t player_init(Vector2 position, Texture2D texture) {
     
-    Rectangle rect = { position.x, position.y, texture.width, texture.height };
-    
-    // Create Player    
-    entity_t new_player = {
-        .texture = texture,
-        .speed = 200,
-        .direction = { 0, 0 },
-        .rect = rect,
-    };
-    
-    return new_player;
+    Vector2 direction = { 0, 0 };
+    int speed = 200;
+    return entity_init(position, texture, direction, speed);
 }

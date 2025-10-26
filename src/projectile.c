@@ -15,15 +15,7 @@ void projectile_move(entity_t *p, float dt) {
 
 entity_t projectile_init(Vector2 position, Texture2D texture) {
     
-    Rectangle rect = { position.x, position.y, texture.width, texture.height };
-    
-    // Create Projectile    
-    entity_t new_projectile = {
-        .texture = texture,
-        .speed = 200,
-        .direction = { 0, -1 },
-        .rect = rect,
-    };
-    
-    return new_projectile;
+    Vector2 direction = { 0, -1 };
+    int speed = 200;
+    return entity_init(position, texture, direction, speed);
 }
