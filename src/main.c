@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "apple.h"
 #include "enemy.h"
+#include "raymath.h"
 
 Texture2D *load_textures();
 void cleanup(
@@ -28,8 +29,11 @@ int main() {
     
     entity_t *all_projectiles = NULL;
     int projectile_count = 0;
+    
     entity_t *all_apples = NULL;
     int apple_count = 0;
+    float apple_spawn_cooldown = 3.0;
+    float last_apple_spawn_time = 0.0;
     
     entity_t *all_enemies = NULL;
     int enemy_count = 0;
@@ -38,19 +42,12 @@ int main() {
     
 
     entity_t player = player_init((Vector2){SCREEN_WIDTH / 2,SCREEN_HEIGHT}, textures[0]);
-    
-    // Temporary
-    entity_t apple_1 = apple_init((Vector2){100, 100}, textures[2]);
-    apple_count += 1;
-    all_apples = add_entity(all_apples, apple_1, apple_count);
-    if (all_apples == NULL) {
-        cleanup(textures, all_projectiles, all_apples, all_enemies);
-        return 1;
-    }
+    int player_lives = 3;
             
+    bool is_running = true;
     
-    
-    while(!WindowShouldClose()) {
+    while(is_running) {
+        is_running = !WindowShouldClose();
         float dt = GetFrameTime();
         
         if (IsKeyReleased('K')) {
@@ -79,6 +76,26 @@ int main() {
             }
         }
         
+        // Apple spawning
+        if (timer(last_apple_spawn_time, apple_spawn_cooldown)) {
+            last_apple_spawn_time = GetTime();
+            if (apple_spawn_cooldown > 0.5) {
+                apple_spawn_cooldown -= 0.1;
+            }
+            
+            // Spawn an apple on each enemy
+            for (int i = 0; i < enemy_count; i++) {
+                Vector2 enemy_position = {all_enemies[i].rect.x, all_enemies[i].rect.y};
+                entity_t new_apple = apple_init(enemy_position, textures[2]);
+                apple_count += 1;
+                all_apples = add_entity(all_apples, new_apple, apple_count);
+                if (all_apples == NULL) {
+                    cleanup(textures, all_projectiles, all_apples, all_enemies);
+                    return 1;
+                }
+            }
+        }
+        
         // Collisions
         // Player Projectile / Enemy
         for (int i = 0; i < projectile_count; i++) {
@@ -87,19 +104,37 @@ int main() {
                 if (collision) {
                     // Kill enemy 
                     all_enemies = remove_entity(all_enemies, j, enemy_count);
-                    enemy_count -= 1;
                     if (all_enemies == NULL && enemy_count > 1) {
                         cleanup(textures, all_projectiles, all_apples, all_enemies);
                         return 1;
                     }
+                    enemy_count -= 1;
                     
                     // Kill projectile
                     all_projectiles = remove_entity(all_projectiles, i, projectile_count);
-                    projectile_count -= 1;
                     if (all_projectiles == NULL && projectile_count > 1) {
                         cleanup(textures, all_projectiles, all_apples, all_enemies);
                         return 1;
                     }
+                    projectile_count -= 1;
+                }
+            }
+        }
+        // Player / Apples
+        for (int i = 0; i < apple_count; i++) {
+            bool collision = CheckCollisionRecs(player.rect, all_apples[i].rect);
+            if (collision) {
+                // Kill apple
+                all_apples = remove_entity(all_apples, i, apple_count);
+                if (all_apples == NULL && apple_count > 1) {
+                    cleanup(textures, all_projectiles, all_apples, all_enemies);
+                    return 1;
+                }
+                apple_count -= 1;
+                
+                player_lives -= 1;
+                if (player_lives <= 0) {
+                    is_running = false;
                 }
             }
         }
@@ -130,6 +165,15 @@ int main() {
             enemy_update(&all_enemies[i], dt);
             entity_draw(&all_enemies[i]);
         }
+        
+        
+        char *lives_text = "Lives: 0"; 
+        if (player_lives == 3) lives_text = "Lives: 3";
+        if (player_lives == 2) lives_text = "Lives: 2";
+        if (player_lives == 1) lives_text = "Lives: 1";
+        
+        // HUD
+        DrawText(lives_text, 50, 50, 28, player_lives > 1 ? BLACK : RED);
         
         EndDrawing();
     }

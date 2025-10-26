@@ -23,10 +23,11 @@ void enemy_move(entity_t *e, float dt) {
 }
 
 entity_t enemy_init(Vector2 position, Texture2D texture) {
-    int randValue = GetRandomValue(0, 1);
-    int x_direction = randValue > 0.5 ? 1 : -1;
-    
+    int rand_value = GetRandomValue(0, 1);
+    int x_direction = rand_value > 0.5 ? 1 : -1;
     Vector2 direction = { x_direction, 0 };
-    int speed = 200;
+    
+    rand_value = GetRandomValue(1, 4);
+    int speed = 50 + rand_value * 100;
     return entity_init(position, texture, direction, speed);
 }
